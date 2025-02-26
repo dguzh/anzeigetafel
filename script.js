@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
+                console.log("API response:", data);
                 displayDepartures(data, station);
             })
             .catch(error => {
@@ -128,20 +129,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const departureInfo = document.createElement('div');
             departureInfo.className = 'departure-info';
-            
-            // Check if vehicle is wheelchair accessible
-            // The API field varies but commonly uses 'accessible' or 'barrierFree'
-            const isAccessible = departure.vehicle?.accessible || 
-                               departure.accessible || 
-                               departure.journey?.accessible ||
-                               false;
-            
-            if (isAccessible) {
-                const wheelchairIcon = document.createElement('span');
-                wheelchairIcon.className = 'accessibility-icon';
-                wheelchairIcon.innerHTML = '♿';
-                departureInfo.appendChild(wheelchairIcon);
-            }
             
             // Calculate minutes until departure
             const departureDate = new Date(departure.stop.departure);

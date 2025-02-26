@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZVV Dynamic Passenger Information</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="station-selector">
+            <div class="autocomplete-container">
+                <input type="text" id="station-input" placeholder="Haltestelle eingeben...">
+                <div id="station-suggestions" class="suggestions-dropdown"></div>
+            </div>
+            <button id="search-btn">Suchen</button>
+        </div>
+        
+        <div class="display-container">
+            <div class="display-board">
+                <div id="departures-list">
+                    <!-- Departures will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 

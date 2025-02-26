@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const departuresList = document.getElementById('departures-list');
     const suggestionsDropdown = document.getElementById('station-suggestions');
     
+    // Timer variable to store the interval reference
+    let updateTimer = null;
+    
     // Set default value for the input field
     stationInput.value = 'Zürich HB';
     
@@ -85,22 +88,36 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function fetchDepartures(station) {
+        // Clear any existing timer
+        if (updateTimer) {
+            clearInterval(updateTimer);
+        }
+        
         // The Swiss public transport API URL
         // Documentation: https://transport.opendata.ch/docs.html
         const apiUrl = `https://transport.opendata.ch/v1/stationboard?station=${encodeURIComponent(station)}&limit=4`;
         
         departuresList.innerHTML = '<p class="loading">Daten werden geladen...</p>';
         
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                console.log("API response:", data);
-                displayDepartures(data, station);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                departuresList.innerHTML = '<p class="error">Fehler beim Laden der Daten. Bitte versuchen Sie es später erneut.</p>';
-            });
+        // Function to fetch and update data
+        function fetchAndUpdate() {
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("API response:", data);
+                    displayDepartures(data, station);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    departuresList.innerHTML = '<p class="error">Fehler beim Laden der Daten. Bitte versuchen Sie es später erneut.</p>';
+                });
+        }
+        
+        // Initial fetch
+        fetchAndUpdate();
+        
+        // Set up timer to update every minute (60000 milliseconds)
+        updateTimer = setInterval(fetchAndUpdate, 60000);
     }
     
     function displayDepartures(data, stationName) {
@@ -144,14 +161,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 departureTime.textContent = `${minutesUntil}'`;
             }
             
-            // Add this to the displayDepartures function where we create the departure time
-            // This would show delays more explicitly
-            if (departure.stop.delay) {
-                const delayMinutes = Math.floor(departure.stop.delay / 60);
-                if (delayMinutes > 0) {
-                    departureTime.textContent = `${minutesUntil}' (+${delayMinutes}')`;
-                    departureTime.classList.add('delayed');
-                }
+            const delayMinutes = Math.floor(departure.stop.delay / 60);
+            if (delayMinutes > 0) {
+                departureTime.textContent = `${minutesUntil}' (+${delayMinutes}')`;
+                departureTime.classList.add('delayed');
             }
             
             departureInfo.appendChild(departureTime);
@@ -162,5 +175,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             departuresList.appendChild(departureRow);
         });
+        
+        // Update timestamp outside of the departures list
+        const updateInfoContainer = document.getElementById('update-info-container');
+        updateInfoContainer.textContent = `Letzte Aktualisierung: ${new Date().toLocaleTimeString()}`;
     }
 }); 

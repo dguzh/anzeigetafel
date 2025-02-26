@@ -138,7 +138,14 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const lineNumber = document.createElement('div');
             lineNumber.className = 'line-number';
-            lineNumber.textContent = departure.number;
+            
+            // Format line number (remove leading zeros and limit length if necessary)
+            let formattedNumber = departure.number;
+            if (formattedNumber.match(/^0+/)) {
+                // Remove leading zeros
+                formattedNumber = formattedNumber.replace(/^0+/, '');
+            }
+            lineNumber.textContent = formattedNumber;
             
             const destination = document.createElement('div');
             destination.className = 'destination';

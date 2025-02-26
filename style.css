@@ -73,9 +73,10 @@ button:hover {
 }
 
 .line-number {
-    width: 70px;
+    width: 100px;
     text-align: right;
     margin-right: 20px;
+    overflow: hidden;
 }
 
 .destination {
